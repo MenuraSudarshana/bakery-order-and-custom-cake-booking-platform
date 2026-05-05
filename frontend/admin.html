@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+
+<h1 id="welcomeText"></h1>
+
+<script>
+    const username = localStorage.getItem("user");
+    document.getElementById("welcomeText").innerText = "Welcome " + username;
+</script>
+
+</body>
+</html>
