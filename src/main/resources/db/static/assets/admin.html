@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Cake Factory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/admin.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <h1>Bakery Admin</h1>
+      <p>Manage products, stock, orders, and reservations.</p>
+    </header>
+
+    <main class="admin-layout">
+      <section id="admin-login-card" class="panel login-panel">
+        <h2>Admin Login</h2>
+        <p class="muted">Use your admin username and password from the `user` table.</p>
+        <form id="admin-login-form" class="grid">
+          <label class="field">
+            <span>Username</span>
+            <input id="admin-username" type="text" required>
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input id="admin-password" type="password" required>
+          </label>
+          <button class="btn primary" type="submit">Login</button>
+        </form>
+        <p id="admin-login-status" class="status"></p>
+      </section>
+
+      <div id="admin-content" class="admin-content is-hidden">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Overview</h2>
+            <button id="refresh-dashboard" class="btn">Refresh</button>
+          </div>
+          <div class="kpi-grid">
+            <article class="kpi-card">
+              <span>Total Active Products</span>
+              <strong id="kpi-products">0</strong>
+            </article>
+            <article class="kpi-card">
+              <span>Low Stock (<=5)</span>
+              <strong id="kpi-low-stock">0</strong>
+            </article>
+            <article class="kpi-card">
+              <span>Pending Orders</span>
+              <strong id="kpi-pending">0</strong>
+            </article>
+            <article class="kpi-card">
+              <span>Successful Orders</span>
+              <strong id="kpi-success">0</strong>
+            </article>
+            <article class="kpi-card">
+              <span>Reservations</span>
+              <strong id="kpi-reservations">0</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Add New Product</h2>
+            <button id="import-catalog-products" class="btn" type="button">Import Website Products</button>
+          </div>
+          <form id="add-product-form" class="grid">
+            <label class="field">
+              <span>Product Name</span>
+              <input id="product-name" type="text" required>
+            </label>
+            <label class="field">
+              <span>Category</span>
+              <input id="product-category" type="text" placeholder="Butter Cake / Signature Cake" required>
+            </label>
+            <label class="field">
+              <span>Flavour</span>
+              <input id="product-flavour" type="text" required>
+            </label>
+            <label class="field">
+              <span>Price (LKR)</span>
+              <input id="product-price" type="number" min="1" step="0.01" required>
+            </label>
+            <label class="field">
+              <span>Rating (0-5)</span>
+              <input id="product-rating" type="number" min="0" max="5" step="0.1" value="4.5" required>
+            </label>
+            <label class="field">
+              <span>Stock</span>
+              <input id="product-stock" type="number" min="0" value="0" required>
+            </label>
+            <label class="field field-wide">
+              <span>Image URL</span>
+              <input id="product-image-url" type="text" placeholder="./assets/images/your-image.png" required>
+            </label>
+            <label class="field field-wide">
+              <span>Description</span>
+              <textarea id="product-description" rows="3" required></textarea>
+            </label>
+            <button class="btn primary field-wide" type="submit">Create Product</button>
+          </form>
+          <p id="add-product-status" class="status"></p>
+        </section>
+
+        <section class="panel">
+          <h2>Edit Product Details</h2>
+          <form id="edit-product-form" class="grid">
+            <label class="field field-wide">
+              <span>Select Product</span>
+              <select id="edit-product-select" required></select>
+            </label>
+            <label class="field">
+              <span>Product Name</span>
+              <input id="edit-product-name" type="text" required>
+            </label>
+            <label class="field">
+              <span>Category</span>
+              <input id="edit-product-category" type="text" required>
+            </label>
+            <label class="field">
+              <span>Flavour</span>
+              <input id="edit-product-flavour" type="text" required>
+            </label>
+            <label class="field">
+              <span>Price (LKR)</span>
+              <input id="edit-product-price" type="number" min="1" step="0.01" required>
+            </label>
+            <label class="field">
+              <span>Rating (0-5)</span>
+              <input id="edit-product-rating" type="number" min="0" max="5" step="0.1" required>
+            </label>
+            <label class="field">
+              <span>Stock</span>
+              <input id="edit-product-stock" type="number" min="0" required>
+            </label>
+            <label class="field field-wide">
+              <span>Image URL</span>
+              <input id="edit-product-image-url" type="text" required>
+            </label>
+            <label class="field field-wide">
+              <span>Description</span>
+              <textarea id="edit-product-description" rows="3" required></textarea>
+            </label>
+            <button class="btn primary field-wide" type="submit">Update Product</button>
+          </form>
+          <p id="edit-product-status" class="status"></p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Stock Management</h2>
+            <button id="refresh-products" class="btn">Reload Products</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Daily Stock Update</h2>
+            <div class="inline-actions">
+              <input id="daily-stock-date" type="date">
+              <button id="refresh-daily-stock" class="btn">Load Date</button>
+            </div>
+          </div>
+          <p id="daily-stock-status" class="status"></p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Entry ID</th>
+                  <th>Product ID</th>
+                  <th>Product Name</th>
+                  <th>Daily Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="daily-stock-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Customer Orders</h2>
+            <div class="inline-actions">
+              <select id="order-status-filter">
+                <option value="all">All Orders</option>
+                <option value="Pending">Pending</option>
+                <option value="Successful">Successful</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+              <button id="refresh-orders" class="btn">Reload Orders</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                  <th>Cancel Request</th>
+                  <th>Pickup</th>
+                  <th>Purchase Details</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Reservations</h2>
+            <button id="refresh-reservations" class="btn">Reload Reservations</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reservation ID</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Persons</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Message</th>
+                  <th>Status</th>
+                  <th>Cancel Request</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reservations-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Cost & Profit Tracking</h2>
+          <form id="expense-form" class="grid">
+            <label class="field">
+              <span>Month (YYYY-MM)</span>
+              <input id="expense-month" type="month" required>
+            </label>
+            <label class="field">
+              <span>Category</span>
+              <input id="expense-category" type="text" placeholder="Goods / Utilities / Salaries / Other" required>
+            </label>
+            <label class="field">
+              <span>Amount (LKR)</span>
+              <input id="expense-amount" type="number" min="1" step="0.01" required>
+            </label>
+            <label class="field field-wide">
+              <span>Note</span>
+              <input id="expense-note" type="text" placeholder="Optional note">
+            </label>
+            <button class="btn primary field-wide" type="submit">Add Cost</button>
+          </form>
+          <p id="expense-status" class="status"></p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Month</th>
+                  <th>Category</th>
+                  <th>Amount</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody id="expense-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Analytics Dashboard</h2>
+            <button id="refresh-analytics" class="btn">Reload Analytics</button>
+          </div>
+          <p id="analytics-status" class="status"></p>
+          <div class="kpi-grid kpi-grid-3">
+            <article class="kpi-card">
+              <span>Current Month Revenue</span>
+              <strong id="kpi-month-revenue">Rs. 0.00</strong>
+            </article>
+            <article class="kpi-card">
+              <span>Current Month Costs</span>
+              <strong id="kpi-month-cost">Rs. 0.00</strong>
+            </article>
+            <article class="kpi-card">
+              <span>Current Month Profit</span>
+              <strong id="kpi-month-profit">Rs. 0.00</strong>
+            </article>
+          </div>
+
+          <div class="chart-grid">
+            <article>
+              <h3>Daily Orders / Successful Orders / Reservations</h3>
+              <div id="daily-count-chart" class="chart-bars"></div>
+            </article>
+            <article>
+              <h3>Daily Revenue (LKR)</h3>
+              <div id="daily-revenue-chart" class="chart-bars"></div>
+            </article>
+            <article>
+              <h3>Monthly Revenue vs Costs</h3>
+              <div id="monthly-finance-chart" class="chart-bars"></div>
+            </article>
+            <article>
+              <h3>Monthly Profit</h3>
+              <div id="monthly-profit-chart" class="chart-bars"></div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="./assets/js/admin.js"></script>
+</body>
+</html>
